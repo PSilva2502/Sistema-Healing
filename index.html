@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HEALING - Sistema Completo de Gestão Clínica</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            margin: 0;
+            padding: 0;
+        }
+        .tab-active { 
+            border-bottom: 3px solid #14b8a6; 
+            color: #14b8a6; 
+        }
+        .notification-badge { 
+            position: absolute; 
+            top: -5px; 
+            right: -5px; 
+            background: #ef4444; 
+            color: white; 
+            border-radius: 50%; 
+            width: 20px; 
+            height: 20px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 11px; 
+            font-weight: bold;
+        }
+        .hidden { 
+            display: none !important; 
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- NAVBAR PRINCIPAL -->
+    <nav class="bg-gradient-to-r from-teal-400 to-cyan-400 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                    <span class="text-white text-2xl font-bold">HEALING</span>
+                </div>
+                <div class="flex items-center space-x-8">
+                    <button onclick="showSection('dashboard')" class="text-white hover:text-gray-100 font-medium transition">Dashboard</button>
+                    <button onclick="showSection('consultas')" class="text-white hover:text-gray-100 font-medium transition">Consultas</button>
+                    <button onclick="showSection('explorar')" class="text-white hover:text-gray-100 font-medium transition">Explorar</button>
+                    <button onclick="showSection('historico')" class="text-white hover:text-gray-100 font-medium transition">Histórico</button>
+                    <button onclick="showSection('pagamentos')" class="text-white hover:text-gray-100 font-medium transition">Pagamentos</button>
+                    <div class="relative">
+                        <button onclick="showSection('notificacoes')" class="text-white hover:text-gray-100 font-medium transition relative">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                            </svg>
+                            <span class="notification-badge">3</span>
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <img src="https://i.pravatar.cc/40?img=13" alt="Usuário" class="w-10 h-10 rounded-full border-2 border-white">
+                        <button onclick="showSection('perfil')" class="text-white hover:text-gray-100 font-medium transition">Pedro Silva</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- TELA 1: DASHBOARD PRINCIPAL -->
+    <section id="dashboard" class="max-w-7xl mx-auto px-4 py-8">
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">Bem-vindo de volta, <span class="text-teal-600">Pedro Silva</span>! 👋</h1>
+            <p class="text-gray-600 text-lg">Aqui está um resumo da sua saúde e atividades recentes</p>
+        </div>
+
+        <!-- Cards de Estatísticas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-gradient-to-br from-teal-400 to-cyan-500 rounded-xl shadow-lg p-6 text-white">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-teal-100 text-sm font-medium">Consultas Agendadas</p>
+                        <h3 class="text-4xl font-bold mt-2" id="totalConsultas">0</h3>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-full p-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <p class="text-teal-100 text-sm">+2 este mês</p>
+            </div>
+
+            <div class="bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl shadow-lg p-6 text-white">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-blue-100 text-sm font-medium">Próxima Consulta</p>
+                        <h3 class="text-2xl font-bold mt-2">Hoje às 14h</h3>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-full p-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <p class="text-blue-100 text-sm">Dr. Pedro Rodrigues</p>
+            </div>
+
+            <div class="bg-gradient-to-br from-purple-400 to-pink-500 rounded-xl shadow-lg p-6 text-white">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-purple-100 text-sm font-medium">Exames Pendentes</p>
+                        <h3 class="text-4xl font-bold mt-2">3</h3>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-full p-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                    </div>
+                </div>
+                <p class="text-purple-100 text-sm">Agendar exames</p>
+            </div>
+
+            <div class="bg-gradient-to-br from-orange-400 to-red-500 rounded-xl shadow-lg p-6 text-white">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-orange-100 text-sm font-medium">Receitas Ativas</p>
+                        <h3 class="text-4xl font-bold mt-2">2</h3>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-full p-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <p class="text-orange-100 text-sm">Ver medicamentos</p>
+            </div>
+        </div>
+
+        <!-- Botão para Nova Consulta -->
+        <div class="mb-8">
+            <button onclick="showSection('explorar')" class="px-6 py-3 bg-teal-500 text-white rounded-lg font-semibold hover:bg-teal-600 transition shadow-lg flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                <span>Agendar Nova Consulta</span>
+            </button>
+        </div>
+
+        <!-- Próximas Consultas no Dashboard -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">Próximas Consultas</h2>
+                <button onclick="showSection('consultas')" class="text-teal-600 hover:text-teal-800 font-medium">Ver todas</button>
+            </div>
+            <div id="consultasDashboard" class="space-y-4">
+                <p class="text-gray-500 text-center py-8">Nenhuma consulta agendada. Clique em "Agendar Nova Consulta" para começar.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- TELA 2: EXPLORAR MÉDICOS -->
+    <section id="explorar" class="max-w-7xl mx-auto px-4 py-8 hidden">
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">Olá, <span class="text-teal-600">Pedro Silva</span>.</h1>
+            <p class="text-gray-600 text-lg">Encontre o especialista ideal para você</p>
+        </div>
+
+        <!-- Busca -->
+        <div class="mb-8">
+            <input type="text" placeholder="Busque por profissionais ..." 
+                   class="w-full px-6 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent text-lg shadow-sm">
+        </div>
+
+        <!-- Cards de Médicos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Card Médico 1 -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-1">
+                <div class="p-6">
+                    <div class="flex items-center space-x-4 mb-4">
+                        <img src="https://i.pravatar.cc/100?img=12" alt="Médico" class="w-16 h-16 rounded-full border-2 border-teal-400">
+                        <div>
+                            <h3 class="font-bold text-lg text-gray-900">Dr. Pedro Rodrigues</h3>
+                            <div class="flex items-center text-yellow-400 mt-1">
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 fill-current text-gray-300" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Dermatologista, especialista em estética e câncer de pele</p>
+                    <div class="flex items-center text-sm text-gray-600 mb-1">
+                        <svg class="w-4 h-4 mr-2 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        Rua Afonso Pereira Marques, 77, França SP
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600 mb-4">
+                        <svg class="w-4 h-4 mr-2 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        Valor: R$ 400,00
+                    </div>
+                    <button onclick="abrirModalAgendamento('Dr. Pedro Rodrigues', 'Dermatologista', 'https://i.pravatar.cc/100?img=12', 400)" 
+                            class="w-full px-4 py-3 bg-teal-400 text-white rounded-lg font-semibold hover:bg-teal-500 transition shadow-md">
+                        Agendar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card Médico 2 -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-1">
+                <div class="p-6">
+                    <div class="flex items-center space-x-4 mb-4">
+                        <img src="https://i.pravatar.cc/100?img=5" alt="Médica" class="w-16 h-16 rounded-full border-2 border-teal-400">
+                        <div>
+                            <h3 class="font-bold text-lg text-gray-900">Dra. Ana Maria Nogueira</h3>
+                            <div class="flex items-center text-yellow-400 mt-1">
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Cardiologista, especialista em doenças cardiovasculares</p>
+                    <div class="flex items-center text-sm text-gray-600 mb-1">
+                        <svg class="w-4 h-4 mr-2 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        Av. Paulista, 1500, São Paulo SP
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600 mb-4">
+                        <svg class="w-4 h-4 mr-2 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        Valor: R$ 550,00
+                    </div>
+                    <button onclick="abrirModalAgendamento('Dra. Ana Maria Nogueira', 'Cardiologista', 'https://i.pravatar.cc/100?img=5', 550)" 
+                            class="w-full px-4 py-3 bg-teal-400 text-white rounded-lg font-semibold hover:bg-teal-500 transition shadow-md">
+                        Agendar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card Médico 3 -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-1">
+                <div class="p-6">
+                    <div class="flex items-center space-x-4 mb-4">
+                        <img src="https://i.pravatar.cc/100?img=8" alt="Médica" class="w-16 h-16 rounded-full border-2 border-teal-400">
+                        <div>
+                            <h3 class="font-bold text-lg text-gray-900">Dra. Mariana Costa</h3>
+                            <div class="flex items-center text-yellow-400 mt-1">
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                <svg class="w-4 h-4 fill-current text-gray-300" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">Oftalmologista, especialista em saúde ocular</p>
+                    <div class="flex items-center text-sm text-gray-600 mb-1">
+                        <svg class="w-4 h-4 mr-2 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        Rua Oscar Freire, 200, São Paulo SP
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600 mb-4">
+                        <svg class="w-4 h-4 mr-2 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        Valor: R$ 450,00
+                    </div>
+                    <button onclick="abrirModalAgendamento('Dra. Mariana Costa', 'Oftalmologista', 'https://i.pravatar.cc/100?img=8', 450)" 
+                            class="w-full px-4 py-3 bg-teal-400 text-white rounded-lg font-semibold hover:bg-teal-500 transition shadow-md">
+                        Agendar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TELA 3: CONSULTAS -->
+    <section id="consultas" class="max-w-7xl mx-auto px-4 py-8 hidden">
+        <h1 class="text-4xl font-bold text-teal-600 mb-8">Suas Consultas</h1>
+        
+        <!-- Filtros -->
+        <div class="flex gap-4 mb-8">
+            <input type="text" placeholder="Buscar por médico..." 
+                   class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent">
+            <input type="date" 
+                   class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent">
+            <button class="px-8 py-3 bg-teal-400 text-white rounded-lg font-semibold hover:bg-teal-500 transition shadow-md">
+                Filtrar
+            </button>
+        </div>
+
+        <!-- Tabela de Consultas -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <table class="w-full">
+                <thead class="bg-gray-100 border-b-2 border-gray-200">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Médico</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Especialidade</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Data e Hora</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Valor</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Status</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaConsultas" class="divide-y divide-gray-200">
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                            Nenhuma consulta agendada. Vá para "Explorar" para agendar sua primeira consulta!
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- MODAL DE AGENDAMENTO -->
+    <div id="modalAgendamento" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-xl shadow-2xl p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-3xl font-bold text-gray-900">Agendar Consulta</h3>
+                <button onclick="fecharModalAgendamento()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Informações do Médico -->
+            <div class="flex items-center space-x-4 mb-6 p-4 bg-teal-50 rounded-lg">
+                <img id="modalMedicoFoto" src="" alt="Médico" class="w-16 h-16 rounded-full border-2 border-teal-400">
+                <div>
+                    <h4 id="modalMedicoNome" class="text-xl font-bold text-gray-900"></h4>
+                    <p id="modalMedicoEspecialidade" class="text-gray-600"></p>
+                    <p id="modalMedicoValor" class="text-teal-600 font-semibold mt-1"></p>
+                </div>
+            </div>
+
+            <form onsubmit="agendarConsulta(event)" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2">Data da Consulta:</label>
+                        <input type="date" id="dataConsulta" required 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2">Horário:</label>
+                        <select id="horarioConsulta" required 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent">
+                            <option value="">Selecione...</option>
+                            <option value="08:00">08:00</option>
+                            <option value="09:00">09:00</option>
+                            <option value="10:00">10:00</option>
+                            <option value="11:00">11:00</option>
+                            <option value="14:00">14:00</option>
+                            <option value="15:00">15:00</option>
+                            <option value="16:00">16:00</option>
+                            <option value="17:00">17:00</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">Motivo da Consulta:</label>
+                    <textarea id="motivoConsulta" rows="3" 
+                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent" 
+                              placeholder="Descreva brevemente o motivo da consulta..."></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">Forma de Pagamento:</label>
+                    <select id="formaPagamento" required 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent">
+                        <option value="">Selecione...</option>
+                        <option value="Plano de Saúde">Plano de Saúde</option>
+                        <option value="Cartão de Crédito">Cartão de Crédito</option>
+                        <option value="Cartão de Débito">Cartão de Débito</option>
+                        <option value="Dinheiro">Dinheiro</option>
+                        <option value="PIX">PIX</option>
+                    </select>
+                </div>
+
+                <div class="flex space-x-4 pt-4">
+                    <button type="button" onclick="fecharModalAgendamento()" 
+                            class="flex-1 px-4 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition">
+                        Cancelar
+                    </button>
+                    <button type="submit" 
+                            class="flex-1 px-4 py-3 bg-teal-400 text-white rounded-lg font-semibold hover:bg-teal-500 transition shadow-md">
+                        Confirmar Agendamento
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE EDIÇÃO -->
+    <div id="modalEditar" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4">
+            <h3 class="text-2xl font-bold text-gray-900 mb-6">Editar Consulta</h3>
+            <form onsubmit="salvarEdicao(event)" class="space-y-4">
+                <input type="hidden" id="editarId">
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">Nova Data:</label>
+                    <input type="date" id="editarData" required 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">Novo Horário:</label>
+                    <select id="editarHorario" required 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent">
+                        <option value="08:00">08:00</option>
+                        <option value="09:00">09:00</option>
+                        <option value="10:00">10:00</option>
+                        <option value="11:00">11:00</option>
+                        <option value="14:00">14:00</option>
+                        <option value="15:00">15:00</option>
+                        <option value="16:00">16:00</option>
+                        <option value="17:00">17:00</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">Motivo da alteração:</label>
+                    <textarea id="editarMotivo" rows="3" 
+                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent" 
+                              placeholder="Descreva o motivo..."></textarea>
+                </div>
+                <div class="flex space-x-4">
+                    <button type="button" onclick="fecharModalEditar()" 
+                            class="flex-1 px-4 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition">
+                        Cancelar
+                    </button>
+                    <button type="submit" 
+                            class="flex-1 px-4 py-3 bg-teal-400 text-white rounded-lg font-semibold hover:bg-teal-500 transition">
+                        Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT JAVASCRIPT -->
+    <script>
+        // Array para armazenar consultas
+        let consultas = [];
+        let proximoId = 1;
+        let medicoSelecionado = null;
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Sistema HEALING carregado!');
+            atualizarListaConsultas();
+        });
+
+        // Função para mostrar seções
+        function showSection(sectionName) {
+            const sections = ['dashboard', 'consultas', 'explorar', 'historico', 'pagamentos', 'notificacoes', 'perfil'];
+            sections.forEach(section => {
+                const element = document.getElementById(section);
+                if (element) {
+                    element.classList.toggle('hidden', section !== sectionName);
+                }
+            });
+        }
+
+        // Abrir modal de agendamento
+        function abrirModalAgendamento(nome, especialidade, foto, valor) {
+            medicoSelecionado = { nome, especialidade, foto, valor };
+            
+            document.getElementById('modalMedicoNome').textContent = nome;
+            document.getElementById('modalMedicoEspecialidade').textContent = especialidade;
+            document.getElementById('modalMedicoFoto').src = foto;
+            document.getElementById('modalMedicoValor').textContent = `Valor: R$ ${valor.toFixed(2)}`;
+            
+            // Definir data mínima como hoje
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('dataConsulta').min = hoje;
+            
+            document.getElementById('modalAgendamento').classList.remove('hidden');
+        }
+
+        // Fechar modal de agendamento
+        function fecharModalAgendamento() {
+            document.getElementById('modalAgendamento').classList.add('hidden');
+            document.getElementById('dataConsulta').value = '';
+            document.getElementById('horarioConsulta').value = '';
+            document.getElementById('motivoConsulta').value = '';
+            document.getElementById('formaPagamento').value = '';
+        }
+
+        // Agendar consulta
+        function agendarConsulta(event) {
+            event.preventDefault();
+            
+            const data = document.getElementById('dataConsulta').value;
+            const horario = document.getElementById('horarioConsulta').value;
+            const motivo = document.getElementById('motivoConsulta').value;
+            const pagamento = document.getElementById('formaPagamento').value;
+            
+            const novaConsulta = {
+                id: proximoId++,
+                medico: medicoSelecionado.nome,
+                especialidade: medicoSelecionado.especialidade,
+                foto: medicoSelecionado.foto,
+                data: data,
+                horario: horario,
+                motivo: motivo,
+                pagamento: pagamento,
+                valor: medicoSelecionado.valor,
+                status: 'Agendada'
+            };
+            
+            consultas.push(novaConsulta);
+            
+            fecharModalAgendamento();
+            atualizarListaConsultas();
+            
+            alert('✅ Consulta agendada com sucesso!');
+            showSection('consultas');
+        }
+
+        // Atualizar lista de consultas
+        function atualizarListaConsultas() {
+            const tbody = document.getElementById('tabelaConsultas');
+            const dashboardDiv = document.getElementById('consultasDashboard');
+            const totalElement = document.getElementById('totalConsultas');
+            
+            // Atualizar contador
+            if (totalElement) {
+                totalElement.textContent = consultas.length;
+            }
+            
+            if (consultas.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                            Nenhuma consulta agendada. Vá para "Explorar" para agendar sua primeira consulta!
+                        </td>
+                    </tr>
+                `;
+                
+                if (dashboardDiv) {
+                    dashboardDiv.innerHTML = `
+                        <p class="text-gray-500 text-center py-8">Nenhuma consulta agendada. Clique em "Agendar Nova Consulta" para começar.</p>
+                    `;
+                }
+                return;
+            }
+            
+            // Ordenar consultas por data
+            const consultasOrdenadas = [...consultas].sort((a, b) => {
+                return new Date(a.data + ' ' + a.horario) - new Date(b.data + ' ' + b.horario);
+            });
+            
+            // Atualizar tabela
+            tbody.innerHTML = consultasOrdenadas.map(consulta => {
+                const dataFormatada = new Date(consulta.data + 'T00:00:00').toLocaleDateString('pt-BR');
+                const statusClass = consulta.status === 'Agendada' ? 'bg-teal-400' : 
+                                   consulta.status === 'Realizada' ? 'bg-gray-400' : 'bg-yellow-400';
+                
+                return `
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center space-x-3">
+                                <img src="${consulta.foto}" alt="${consulta.medico}" class="w-10 h-10 rounded-full border-2 border-teal-400">
+                                <span class="font-medium text-gray-900">${consulta.medico}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-gray-700">${consulta.especialidade}</td>
+                        <td class="px-6 py-4 text-gray-700">${dataFormatada} às ${consulta.horario}</td>
+                        <td class="px-6 py-4 font-semibold text-gray-900">R$ ${consulta.valor.toFixed(2)}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-4 py-1.5 ${statusClass} text-white rounded-full text-sm font-medium">${consulta.status}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <button onclick="editarConsulta(${consulta.id})" class="text-teal-600 hover:text-teal-800 font-medium mr-4">Editar</button>
+                            <button onclick="excluirConsulta(${consulta.id})" class="text-red-600 hover:text-red-800 font-medium">Excluir</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            // Atualizar dashboard (mostrar apenas as 3 próximas)
+            if (dashboardDiv) {
+                const proximasConsultas = consultasOrdenadas.slice(0, 3);
+                dashboardDiv.innerHTML = proximasConsultas.map(consulta => {
+                    const dataFormatada = new Date(consulta.data + 'T00:00:00').toLocaleDateString('pt-BR');
+                    const cores = {
+                        'Dermatologista': 'teal',
+                        'Cardiologista': 'blue',
+                        'Oftalmologista': 'purple'
+                    };
+                    const cor = cores[consulta.especialidade] || 'teal';
+                    
+                    return `
+                        <div class="border-l-4 border-${cor}-400 bg-${cor}-50 rounded-lg p-4 hover:shadow-md transition">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-start space-x-4">
+                                    <img src="${consulta.foto}" alt="${consulta.medico}" class="w-14 h-14 rounded-full border-2 border-${cor}-400">
+                                    <div>
+                                        <h3 class="font-bold text-gray-900 text-lg">${consulta.medico}</h3>
+                                        <p class="text-gray-600 text-sm">${consulta.especialidade}</p>
+                                        <div class="flex items-center mt-2 text-sm text-gray-700">
+                                            <svg class="w-4 h-4 mr-1 text-${cor}-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                            </svg>
+                                            <span class="font-medium">${dataFormatada}, ${consulta.horario}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col space-y-2">
+                                    <button class="px-4 py-2 bg-${cor}-400 text-white rounded-lg text-sm font-semibold hover:bg-${cor}-500 transition">Ver Detalhes</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Editar consulta
+        function editarConsulta(id) {
+            const consulta = consultas.find(c => c.id === id);
+            if (!consulta) return;
+            
+            document.getElementById('editarId').value = id;
+            document.getElementById('editarData').value = consulta.data;
+            document.getElementById('editarHorario').value = consulta.horario;
+            
+            document.getElementById('modalEditar').classList.remove('hidden');
+        }
+
+        // Fechar modal de edição
+        function fecharModalEditar() {
+            document.getElementById('modalEditar').classList.add('hidden');
+        }
+
+        // Salvar edição
+        function salvarEdicao(event) {
+            event.preventDefault();
+            
+            const id = parseInt(document.getElementById('editarId').value);
+            const novaData = document.getElementById('editarData').value;
+            const novoHorario = document.getElementById('editarHorario').value;
+            
+            const consulta = consultas.find(c => c.id === id);
+            if (consulta) {
+                consulta.data = novaData;
+                consulta.horario = novoHorario;
+            }
+            
+            fecharModalEditar();
+            atualizarListaConsultas();
+            alert('✅ Consulta editada com sucesso!');
+        }
+
+        // Excluir consulta
+        function excluirConsulta(id) {
+            if (confirm('Tem certeza que deseja cancelar esta consulta?')) {
+                consultas = consultas.filter(c => c.id !== id);
+                atualizarListaConsultas();
+                alert('✅ Consulta cancelada com sucesso!');
+            }
+        }
+    </script>
+</body>
+</html>
